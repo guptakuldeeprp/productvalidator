@@ -11,33 +11,17 @@ import java.util.stream.Stream;
 public class BasicValidationService implements ValidationService {
 
 
-    //    @Override
     @Override
     public List<String> validate(Stream<String> data, Predicate<String>... validations) {
 
-//        Predicate<String> combinedValidation = s -> false;
-//        for (Predicate<String> val : validations) {
-//            combinedValidation = combinedValidation.or(val);
-//        }
-
         Predicate<String> combinedValidation = Arrays.stream(validations).reduce(Predicate::or).orElse(s -> true);
-
-//        List<String> failedData =
         return data.filter(combinedValidation).collect(Collectors.toList());
-
-
-//        return failedData;
 
     }
 
     //    @Override
     @Override
     public Map<String, List<String>> validate2(List<String> data, Validation<String>... validations) {
-
-//        Map<String, List<String>> failedData = new HashMap<>();
-
-//        Arrays.stream(validations).forEach(val ->
-//                data.stream().filter(s -> val.test(s)).collect(Collectors.));
 
         return Arrays
                 .stream(validations)
@@ -54,12 +38,6 @@ public class BasicValidationService implements ValidationService {
                             return acc1;
                         });
 
-
-//        for (final Validation val : validations) {
-//            failedData.put(val.getName(), data.stream().filter(s -> val.test(s)).collect(Collectors.toList()));
-//        }
-//
-//        return failedData;
     }
 
     public static void main(String[] args) {
