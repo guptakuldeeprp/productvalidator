@@ -1,11 +1,9 @@
 package com.zycus.validator.core.data;
 
-import com.google.common.reflect.TypeToken;
 import com.zycus.validator.core.ex.CellValueTypeException;
 
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.StreamSupport;
 
 public class DataCell {
 

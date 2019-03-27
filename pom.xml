@@ -14,5 +14,10 @@
             <artifactId>fastexcel-reader</artifactId>
             <version>0.10.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>27.0.1-jre</version>
+        </dependency>
     </dependencies>
 </project>
