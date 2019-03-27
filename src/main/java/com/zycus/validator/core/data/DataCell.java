@@ -1,13 +1,15 @@
 package com.zycus.validator.core.data;
 
+import com.google.common.reflect.TypeToken;
 import com.zycus.validator.core.ex.CellValueTypeException;
 
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.StreamSupport;
 
 public class DataCell {
 
-    private Object value;
+    private final Object value;
 
     public DataCell(Object value) {
         this.value = value;
@@ -18,7 +20,7 @@ public class DataCell {
     }
 
     public Optional<String> asStringOptional() {
-        return makeOptionalRaw(String::valueOf);
+        return makeOptionalRaw(String::valueOf, String.class);
     }
 
     public Boolean asBoolean() {
@@ -29,7 +31,7 @@ public class DataCell {
     }
 
     public Optional<Boolean> asBooleanOptional() {
-        return makeOptional(Boolean::valueOf);
+        return makeOptional(Boolean::valueOf, Boolean.class);
     }
 
     public Integer asInt() {
@@ -39,7 +41,7 @@ public class DataCell {
     }
 
     public Optional<Integer> asIntOptional() {
-        return makeOptional(Integer::valueOf);
+        return makeOptional(Integer::valueOf, Integer.class);
     }
 
 
@@ -51,35 +53,39 @@ public class DataCell {
     }
 
     public Optional<Long> asLongOptional() {
-        return makeOptional(Long::valueOf);
+        return makeOptional(Long::valueOf, Long.class);
     }
 
     public Object raw() {
         return value;
     }
 
-    private <R> Optional<R> makeOptional(Function<String, R> mapper) {
-        R t = null;
+    public <R> Optional<R> makeOptional(Function<String, R> mapper, Class<R> clazz) {
         try {
             return Optional.ofNullable(asString()).map(mapper);
         } catch (Exception e) {
-            throw new CellValueTypeException(e, t.getClass());
+
+            throw new CellValueTypeException(e, clazz);
         }
 
     }
 
-    private <T, R> Optional<R> makeOptionalRaw(Function<Object, R> mapper) {
-        R t = null;
+    private <R> Optional<R> makeOptionalRaw(Function<Object, R> mapper, Class<R> clazz) {
         try {
             return Optional.ofNullable(asString()).map(mapper);
         } catch (Exception e) {
-            throw new CellValueTypeException(e, t.getClass());
+
+            throw new CellValueTypeException(e, clazz);
         }
 
     }
 
 
     public static void main(String[] args) {
+
+        DataCell cell = new DataCell("123");
+        System.out.println(cell.makeOptional(Integer::valueOf, Integer.class));
+
     }
 
 
