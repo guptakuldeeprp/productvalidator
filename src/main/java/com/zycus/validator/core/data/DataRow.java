@@ -6,9 +6,17 @@ import java.util.List;
 
 public class DataRow implements Iterable<DataCell> {
 
+    private final int pos;
+
     private final List<DataCell> cells;
 
     public DataRow(List<DataCell> cells) {
+        this.cells = cells;
+        pos = -1;
+    }
+
+    public DataRow(List<DataCell> cells, int pos) {
+        this.pos = pos;
         this.cells = cells;
     }
 
@@ -28,5 +36,9 @@ public class DataRow implements Iterable<DataCell> {
     @Override
     public Iterator<DataCell> iterator() {
         return cells.iterator();
+    }
+
+    public int getPos() {
+        return pos;
     }
 }

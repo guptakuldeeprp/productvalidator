@@ -9,8 +9,16 @@ public class DataCell {
 
     private final Object value;
 
+    private final int pos;
+
     public DataCell(Object value) {
         this.value = value;
+        pos = -1;
+    }
+
+    public DataCell(Object value, int pos) {
+        this.value = value;
+        this.pos = pos;
     }
 
     public String asString() {
@@ -54,6 +62,11 @@ public class DataCell {
         return makeOptional(Long::valueOf, Long.class);
     }
 
+//    public <T> T asType(Class<T> clazz) {
+//
+//    }
+
+
     public Object raw() {
         return value;
     }
@@ -78,6 +91,9 @@ public class DataCell {
 
     }
 
+    public int getPos() {
+        return pos;
+    }
 
     public static void main(String[] args) {
 

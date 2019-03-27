@@ -21,21 +21,29 @@ public class XlsxReader {
 
 //    private ValidationService validationService = new BasicValidationService();
 
+    /**
+     * Stream returned keeps underlying input stream open
+     *
+     * @param filePath
+     * @return
+     * @throws IOException
+     */
     public Stream<DataRow> readRows(String filePath) throws IOException {
 
-        try (InputStream is = new FileInputStream(filePath); ReadableWorkbook wb = new ReadableWorkbook(is)) {
+        InputStream is = new FileInputStream(filePath);
+        ReadableWorkbook wb = new ReadableWorkbook(is);
 
-            Sheet sheet = wb.getFirstSheet();
-            return sheet.openStream().map(this::adapt);
-        }
+        Sheet sheet = wb.getFirstSheet();
+        return sheet.openStream().map(this::adapt);
+
     }
 
     private DataRow adapt(Row row) {
         Iterable<Cell> iterable = () -> row.iterator();
         Stream<Cell> targetStream = StreamSupport.stream(iterable.spliterator(), false);
-        List<DataCell> dataCells = targetStream.map(cell -> new DataCell(cell.getValue()))
+        List<DataCell> dataCells = targetStream.map(cell -> new DataCell(cell.getValue(), cell.getColumnIndex()))
                 .collect(Collectors.toList());
-        return new DataRow(dataCells);
+        return new DataRow(dataCells, row.getRowNum());
     }
 
     public static void main(String[] args) {

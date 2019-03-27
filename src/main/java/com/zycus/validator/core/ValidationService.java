@@ -10,5 +10,7 @@ public interface ValidationService {
     List<String> validate(Stream<String> data, Predicate<String>... validations);
 
     //    @Override
-    Map<String, List<String>> validate2(List<String> data, Validation<String>... validations);
+    Map<String, List<String>> validate(List<String> data, Validation<String>... validations);
+
+
 }
