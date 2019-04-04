@@ -3,7 +3,6 @@ package com.zycus.validator.core;
 
 import com.google.common.reflect.TypeToken;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -61,7 +60,7 @@ public class Validation<T> {
 //    }
 
     public Validation(TPred<? super T> tPred) {
-        this(tPred,null);
+        this(tPred, null);
     }
 
     //    public Validation(Predicate<? super T> tPred, Class<T> type) {
@@ -111,7 +110,27 @@ public class Validation<T> {
         this.name = name;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Validation<?> that = (Validation<?>) o;
+        return name.equals(that.name) &&
+                type.equals(that.type);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, type);
+    }
+
+    @Override
+    public String toString() {
+        return "Validation{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 
     public static void main(String[] args) {
 //        Validation<String> v = new Validation<String>(s -> s.contains("a"), String.class);

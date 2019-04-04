@@ -1,34 +1,47 @@
 package com.zycus.validator.core.data;
 
-import com.zycus.validator.core.ex.CellValueTypeException;
+import com.zycus.validator.core.Validation;
 
 import java.util.Optional;
 import java.util.function.Function;
 
-public class DataCell {
+public class DataCell implements Cell {
 
     private final Object value;
 
-    private final int pos;
+    private final int i, j;
 
     public DataCell(Object value) {
-        this.value = value;
-        pos = -1;
+        this(value, -1);
     }
 
-    public DataCell(Object value, int pos) {
-        this.value = value;
-        this.pos = pos;
+    public DataCell(Object value, int j) {
+        this(value, -1, j);
     }
 
+    public DataCell(Object value, int i, int j) {
+        this.value = value;
+        this.i = i;
+        this.j = j;
+    }
+
+    @Override
     public String asString() {
+        return asString(value);
+    }
+
+
+    private String asString(Object value) {
+        if (value instanceof String) return (String) value;
         return String.valueOf(value);
     }
 
+    @Override
     public Optional<String> asStringOptional() {
-        return makeOptionalRaw(String::valueOf, String.class);
+        return mapRawOptional(String::valueOf, String.class);
     }
 
+    @Override
     public Boolean asBoolean() {
         if (value instanceof Boolean)
             return (Boolean) value;
@@ -36,21 +49,25 @@ public class DataCell {
         return Boolean.valueOf(asString());
     }
 
+    @Override
     public Optional<Boolean> asBooleanOptional() {
         return makeOptional(Boolean::valueOf, Boolean.class);
     }
 
+    @Override
     public Integer asInt() {
         if (value instanceof Integer)
             return (Integer) value;
         return Integer.valueOf(asString());
     }
 
+    @Override
     public Optional<Integer> asIntOptional() {
         return makeOptional(Integer::valueOf, Integer.class);
     }
 
 
+    @Override
     public Long asLong() {
         if (value instanceof Long)
             return (Long) value;
@@ -58,6 +75,7 @@ public class DataCell {
 
     }
 
+    @Override
     public Optional<Long> asLongOptional() {
         return makeOptional(Long::valueOf, Long.class);
     }
@@ -67,32 +85,19 @@ public class DataCell {
 //    }
 
 
+    @Override
     public Object raw() {
         return value;
     }
 
-    public <R> Optional<R> makeOptional(Function<String, R> mapper, Class<R> clazz) {
-        try {
-            return Optional.ofNullable(asString()).map(mapper);
-        } catch (Exception e) {
-
-            throw new CellValueTypeException(e, clazz);
-        }
-
+    <R> Optional<R> makeOptional(Function<String, R> mapper, Class<R> clazz) {
+        Function<Object, String> f = v -> asString(v);
+        return mapRawOptional(f.andThen(mapper), clazz);
     }
 
-    private <R> Optional<R> makeOptionalRaw(Function<Object, R> mapper, Class<R> clazz) {
-        try {
-            return Optional.ofNullable(asString()).map(mapper);
-        } catch (Exception e) {
-
-            throw new CellValueTypeException(e, clazz);
-        }
-
-    }
-
-    public int getPos() {
-        return pos;
+    @Override
+    public int[] getPos() {
+        return new int[]{i, j};
     }
 
     public static void main(String[] args) {

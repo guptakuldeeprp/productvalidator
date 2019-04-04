@@ -1,9 +1,7 @@
 package com.zycus.validator.core;
 
-import com.zycus.validator.core.data.DataCell;
-import com.zycus.validator.core.data.DataRow;
-import com.zycus.validator.core.data.FailedCell;
-import com.zycus.validator.core.data.ValidationDescription;
+import com.zycus.validator.core.data.*;
+import com.zycus.validator.core.data.ValidationDescription.ValidationGroup;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -51,26 +49,26 @@ public class BasicValidationService implements ValidationService {
     }
 
 
-    public Stream<List<FailedCell>> validate(Stream<DataRow> data, final ValidationDescription validationDesc) {
-        return data.map(r -> validate(r, validationDesc)).filter(l -> !l.isEmpty());
+    public Stream<DataRow> validate(Stream<DataRow> data, final ValidationDescription validationDesc) {
+        return data.map(r -> validate(r, validationDesc)).filter(r -> !r.isEmpty());
     }
 
-    private List<FailedCell> validate(final DataRow row, ValidationDescription validationDesc) {
-        List<FailedCell> failures = new ArrayList<>();
-        for (DataCell cell : row) {
-            List<Validation> validations = validationDesc.getValidations(cell.getPos());
+    private DataRow validate(final DataRow row, ValidationDescription validationDesc) {
+        List<Cell> failures = new ArrayList<>();
+        for (Cell cell : row) {
+            ValidationGroup validations = validationDesc.getValidations(cell.getPos()[1]);
             Optional<FailedCell> failure = failingValidations(cell, validations);
-            FailedCell fc = failure.map(f -> f.setPos(row.getPos(), cell.getPos())).orElse(null);
+            FailedCell fc = failure.map(f -> f.setPos(cell.getPos())).orElse(null);
             if (!Objects.isNull(fc))
                 failures.add(fc);
         }
 
-        return failures;
+        return new DataRow(failures, row.getPos());
     }
 
-    private Optional<FailedCell> failingValidations(final DataCell cell, List<Validation> validations) {
-        List<Validation> result = Collections.unmodifiableList(validations.stream().filter(v -> v.test(cell)).collect(Collectors.toList()));
-        return Optional.ofNullable(result.isEmpty() ? null : new FailedCell(cell, result));
+    private Optional<FailedCell> failingValidations(final Cell cell, ValidationGroup validations) {
+        ValidationGroup failedValidations = validations.getFailedValidations(cell);
+        return Optional.ofNullable(failedValidations.getValidations().isEmpty() ? null : new FailedCell(cell, failedValidations));
     }
 
     public static void main(String[] args) {

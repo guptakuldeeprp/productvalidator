@@ -1,5 +1,7 @@
 package com.zycus.validator.tests;
 
+import com.nurkiewicz.lazyseq.LazySeq;
+
 import java.util.PrimitiveIterator;
 import java.util.stream.IntStream;
 
@@ -13,5 +15,9 @@ public class Demo {
 
 
 
+    }
+
+    private LazySeq<Integer> naturals(int from) {
+        return LazySeq.cons(from, () -> naturals(from + 1));
     }
 }
