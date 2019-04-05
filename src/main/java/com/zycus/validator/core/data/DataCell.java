@@ -1,7 +1,5 @@
 package com.zycus.validator.core.data;
 
-import com.zycus.validator.core.Validation;
-
 import java.util.Optional;
 import java.util.function.Function;
 
